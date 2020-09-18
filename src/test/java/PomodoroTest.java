@@ -69,5 +69,20 @@ public class PomodoroTest {
         Assert.assertTrue(pomodoro.isRunning());
         Assert.assertFalse(pomodoro.isOnBreak());
         Assert.assertFalse(startedBreakCondition);
+
+        TestObserver<Integer> testObserver = TestObserver.create();
+        observable.subscribe(testObserver);
+
+        try {
+            testObserver.await(65, TimeUnit.SECONDS);
+        } catch (InterruptedException e) {
+            Assert.assertTrue(pomodoro.isOnBreak());
+        }
+
+        try {
+            testObserver.await(65, TimeUnit.SECONDS);
+        } catch (InterruptedException e) {
+            Assert.assertFalse(pomodoro.isOnBreak());
+        }
     }
 }
