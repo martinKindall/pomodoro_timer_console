@@ -72,9 +72,8 @@ public class SimplePomodoro implements PomodoroTimer {
 
     @Override
     public void startAndSubscribe() {
-        disposable = start().subscribe();
+        start().blockingSubscribe();
     }
-
     @Override
     public void stop() {
         if (disposable != null) {
