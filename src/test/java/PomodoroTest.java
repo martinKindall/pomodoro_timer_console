@@ -8,10 +8,14 @@ public class PomodoroTest {
 
     PomodoroTimer pomodoro;
     int delayInMinutes = 1;
+    Runnable justSomeAction;
+    boolean testableCondition;
 
     @Before
     public void setup() {
-        pomodoro = new SimplePomodoro(delayInMinutes);
+        testableCondition = false;
+        justSomeAction = () -> testableCondition = true;
+        pomodoro = new SimplePomodoro(delayInMinutes, justSomeAction);
     }
 
     @Test
@@ -37,6 +41,25 @@ public class PomodoroTest {
             TimeUnit.SECONDS.sleep(20);
         } catch (InterruptedException e) {
             Assert.assertTrue(pomodoro.hasFinished());
+        }
+    }
+
+    @Test
+    public void checkRunnableWasExecuted() {
+        pomodoro.start();
+        Assert.assertTrue(pomodoro.isRunning());
+        Assert.assertFalse(pomodoro.hasFinished());
+
+        try {
+            TimeUnit.SECONDS.sleep(50);
+        } catch (InterruptedException e) {
+            Assert.assertFalse(testableCondition);
+        }
+
+        try {
+            TimeUnit.SECONDS.sleep(20);
+        } catch (InterruptedException e) {
+            Assert.assertTrue(testableCondition);
         }
     }
 }
