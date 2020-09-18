@@ -1,3 +1,5 @@
+import io.reactivex.rxjava3.core.Completable;
+import io.reactivex.rxjava3.observers.TestObserver;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -27,39 +29,31 @@ public class PomodoroTest {
 
     @Test
     public void checkItIsDone() {
-        pomodoro.start();
+        Completable observable = pomodoro.start();
         Assert.assertTrue(pomodoro.isRunning());
         Assert.assertFalse(pomodoro.hasFinished());
 
-        try {
-            TimeUnit.SECONDS.sleep(50);
-        } catch (InterruptedException e) {
-            Assert.assertFalse(pomodoro.hasFinished());
-        }
+        TestObserver<Void> testObserver = TestObserver.create();
+        observable.subscribe(testObserver);
 
-        try {
-            TimeUnit.SECONDS.sleep(20);
-        } catch (InterruptedException e) {
-            Assert.assertTrue(pomodoro.hasFinished());
-        }
+        testObserver.awaitDone(50, TimeUnit.SECONDS);
+        Assert.assertFalse(pomodoro.hasFinished());
+
+        testObserver.awaitDone(20, TimeUnit.SECONDS);
+        Assert.assertTrue(pomodoro.hasFinished());
     }
 
     @Test
     public void checkRunnableWasExecuted() {
-        pomodoro.start();
+        Completable observable = pomodoro.start();
         Assert.assertTrue(pomodoro.isRunning());
         Assert.assertFalse(pomodoro.hasFinished());
+        Assert.assertFalse(testableCondition);
 
-        try {
-            TimeUnit.SECONDS.sleep(50);
-        } catch (InterruptedException e) {
-            Assert.assertFalse(testableCondition);
-        }
+        TestObserver<Void> testObserver = TestObserver.create();
+        observable.subscribe(testObserver);
 
-        try {
-            TimeUnit.SECONDS.sleep(20);
-        } catch (InterruptedException e) {
-            Assert.assertTrue(testableCondition);
-        }
+        testObserver.awaitDone(65, TimeUnit.SECONDS);
+        Assert.assertTrue(testableCondition);
     }
 }

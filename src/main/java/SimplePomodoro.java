@@ -1,3 +1,6 @@
+import io.reactivex.rxjava3.annotations.NonNull;
+import io.reactivex.rxjava3.core.*;
+
 import java.util.concurrent.TimeUnit;
 
 public class SimplePomodoro implements PomodoroTimer {
@@ -33,14 +36,14 @@ public class SimplePomodoro implements PomodoroTimer {
     }
 
     @Override
-    public void start() {
+    public Completable start() {
         isRunning = true;
         startTime = System.currentTimeMillis();
 
-        try {
-            TimeUnit.MINUTES.sleep(delayInMinutes);
-        } catch (InterruptedException e) {
-            task.run();
-        }
+        return Completable.complete().delay(delayInMinutes*60, TimeUnit.SECONDS)
+                .doOnComplete(() -> {
+                    System.out.println("I was completed!");
+                    task.run();
+                });
     }
 }
