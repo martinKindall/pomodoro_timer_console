@@ -1,5 +1,7 @@
 import io.reactivex.rxjava3.core.Observable;
 import io.reactivex.rxjava3.observers.TestObserver;
+import logic.PomodoroTimer;
+import logic.SimplePomodoro;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
