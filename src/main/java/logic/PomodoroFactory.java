@@ -2,7 +2,7 @@ package logic;
 
 public class PomodoroFactory {
 
-    PomodoroTimer create(
+    public PomodoroTimer create(
             int workTime,
             int breakTime,
             Runnable onBreakTask,

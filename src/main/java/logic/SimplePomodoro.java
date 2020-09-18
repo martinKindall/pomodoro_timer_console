@@ -1,6 +1,7 @@
 package logic;
 
 import io.reactivex.rxjava3.core.*;
+import io.reactivex.rxjava3.disposables.Disposable;
 import io.reactivex.rxjava3.subjects.ReplaySubject;
 
 import java.util.concurrent.TimeUnit;
@@ -13,6 +14,7 @@ public class SimplePomodoro implements PomodoroTimer {
     private boolean isOnBreak;
     private Runnable startedBreakTask;
     private Runnable finishedBreakTask;
+    private Disposable disposable;
 
     public SimplePomodoro(int delayInMinutes, int breakDelayInMinutes,
                           Runnable startedBreakTask, Runnable finishedBreakTask) {
@@ -66,5 +68,17 @@ public class SimplePomodoro implements PomodoroTimer {
         newInterval.onNext(delayInMinutes);
 
         return finalObservable;
+    }
+
+    @Override
+    public void startAndSubscribe() {
+        disposable = start().subscribe();
+    }
+
+    @Override
+    public void stop() {
+        if (disposable != null) {
+            disposable.dispose();
+        }
     }
 }

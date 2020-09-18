@@ -9,4 +9,6 @@ public interface PomodoroTimer {
     boolean isRunning();
     boolean isOnBreak();
     Observable<Integer> start();
+    void startAndSubscribe();
+    void stop();
 }
