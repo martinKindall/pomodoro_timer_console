@@ -1,4 +1,4 @@
-import io.reactivex.rxjava3.core.Completable;
+import io.reactivex.rxjava3.core.Observable;
 import io.reactivex.rxjava3.observers.TestObserver;
 import org.junit.Assert;
 import org.junit.Before;
@@ -10,47 +10,64 @@ public class PomodoroTest {
 
     PomodoroTimer pomodoro;
     int delayInMinutes = 1;
-    Runnable justSomeAction;
-    boolean testableCondition;
+    int breakDelayInMinutes = 1;
+    Runnable startedBreak;
+    Runnable finishedBreak;
+    boolean startedBreakCondition;
+    boolean finishedBreakCondition;
 
     @Before
     public void setup() {
-        testableCondition = false;
-        justSomeAction = () -> testableCondition = true;
-        pomodoro = new SimplePomodoro(delayInMinutes, justSomeAction);
+        startedBreakCondition = false;
+        finishedBreakCondition = false;
+        startedBreak = () -> startedBreakCondition = true;
+        finishedBreak = () -> finishedBreakCondition = true;
+        pomodoro = new SimplePomodoro(
+                delayInMinutes,
+                breakDelayInMinutes,
+                startedBreak,
+                finishedBreak);
     }
 
     @Test
     public void checkInitialConditions() {
         Assert.assertEquals(pomodoro.programmedDelayInMinutes(), 1);
         Assert.assertFalse(pomodoro.isRunning());
-        Assert.assertFalse(pomodoro.hasFinished());
+        Assert.assertFalse(pomodoro.isOnBreak());
     }
 
     @Test
     public void checkItIsDone() {
-        Completable observable = pomodoro.start();
+        Observable<Integer> observable = pomodoro.start();
         Assert.assertTrue(pomodoro.isRunning());
-        Assert.assertFalse(pomodoro.hasFinished());
+        Assert.assertFalse(pomodoro.isOnBreak());
 
-        TestObserver<Void> testObserver = TestObserver.create();
+        TestObserver<Integer> testObserver = TestObserver.create();
         observable.subscribe(testObserver);
 
         testObserver.awaitDone(65, TimeUnit.SECONDS);
-        Assert.assertTrue(pomodoro.hasFinished());
+        Assert.assertTrue(pomodoro.isOnBreak());
     }
 
     @Test
     public void checkRunnableWasExecuted() {
-        Completable observable = pomodoro.start();
+        Observable<Integer> observable = pomodoro.start();
         Assert.assertTrue(pomodoro.isRunning());
-        Assert.assertFalse(pomodoro.hasFinished());
-        Assert.assertFalse(testableCondition);
+        Assert.assertFalse(pomodoro.isOnBreak());
+        Assert.assertFalse(startedBreakCondition);
 
-        TestObserver<Void> testObserver = TestObserver.create();
+        TestObserver<Integer> testObserver = TestObserver.create();
         observable.subscribe(testObserver);
 
         testObserver.awaitDone(65, TimeUnit.SECONDS);
-        Assert.assertTrue(testableCondition);
+        Assert.assertTrue(startedBreakCondition);
+    }
+
+    @Test
+    public void checkBreakHasStartedAndFinished() {
+        Observable<Integer> observable = pomodoro.start();
+        Assert.assertTrue(pomodoro.isRunning());
+        Assert.assertFalse(pomodoro.isOnBreak());
+        Assert.assertFalse(startedBreakCondition);
     }
 }

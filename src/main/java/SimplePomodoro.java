@@ -1,19 +1,26 @@
 import io.reactivex.rxjava3.core.*;
+import io.reactivex.rxjava3.subjects.PublishSubject;
+import io.reactivex.rxjava3.subjects.ReplaySubject;
 
 import java.util.concurrent.TimeUnit;
 
 public class SimplePomodoro implements PomodoroTimer {
 
     private int delayInMinutes;
+    private int breakDelayInMinutes;
     private boolean isRunning;
-    private boolean hasFinished;
-    private Runnable task;
+    private boolean isOnBreak;
+    private Runnable startedBreakTask;
+    private Runnable finishedBreakTask;
 
-    public SimplePomodoro(int delayInMinutes, Runnable task) {
+    public SimplePomodoro(int delayInMinutes, int breakDelayInMinutes,
+                          Runnable startedBreakTask, Runnable finishedBreakTask) {
         this.delayInMinutes = delayInMinutes;
+        this.breakDelayInMinutes = breakDelayInMinutes;
         isRunning = false;
-        this.task = task;
-        hasFinished = false;
+        this.startedBreakTask = startedBreakTask;
+        this.finishedBreakTask = finishedBreakTask;
+        isOnBreak = false;
     }
 
     @Override
@@ -27,19 +34,36 @@ public class SimplePomodoro implements PomodoroTimer {
     }
 
     @Override
-    public boolean hasFinished() {
-        return hasFinished;
+    public boolean isOnBreak() {
+        return isOnBreak;
     }
 
     @Override
-    public Completable start() {
-        hasFinished = false;
+    public Observable<Integer> start() {
+        isOnBreak = false;
         isRunning = true;
 
-        return Completable.complete().delay(delayInMinutes*60, TimeUnit.SECONDS)
-                .doOnComplete(() -> {
-                    hasFinished = true;
-                    task.run();
-                });
+        ReplaySubject<Integer> newInterval = ReplaySubject.create();
+
+        Observable<Integer> finalObservable = newInterval.switchMap(currentPeriod ->
+                Observable.just(0).delay(currentPeriod*60, TimeUnit.SECONDS)
+                .map(v -> {
+                    if (isOnBreak) {
+                        isOnBreak = false;
+                        finishedBreakTask.run();
+                        newInterval.onNext(delayInMinutes);
+                    } else {
+                        isOnBreak = true;
+                        startedBreakTask.run();
+                        newInterval.onNext(breakDelayInMinutes);
+                    }
+
+                    return 0;
+                })
+        );
+
+        newInterval.onNext(delayInMinutes);
+
+        return finalObservable;
     }
 }
