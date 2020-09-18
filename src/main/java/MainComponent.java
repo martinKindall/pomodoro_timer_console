@@ -1,13 +1,13 @@
 import logic.PomodoroFactory;
 import ui.ConsoleUI;
 import utils.ConsoleUtils;
+import utils.PomodoroTasks;
 
-public class Main {
+public class MainComponent {
 
-    public static void main(String[] args) {
+    public void init(PomodoroTasks tasks) {
         PomodoroFactory factory = new PomodoroFactory();
         ConsoleUtils utils = new ConsoleUtils();
-
-        ConsoleUI ui = new ConsoleUI(utils,factory);
+        ConsoleUI ui = new ConsoleUI(utils,factory, tasks);
     }
 }

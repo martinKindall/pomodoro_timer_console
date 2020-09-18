@@ -25,11 +25,6 @@
             <artifactId>rxjava</artifactId>
             <version>3.0.6</version>
         </dependency>
-        <dependency>
-            <groupId>com.github.almasb</groupId>
-            <artifactId>fxgl</artifactId>
-            <version>11.11</version>
-        </dependency>
     </dependencies>
 
     <properties>

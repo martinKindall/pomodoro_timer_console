@@ -3,6 +3,7 @@ package ui;
 import logic.PomodoroFactory;
 import logic.PomodoroTimer;
 import utils.ConsoleUtils;
+import utils.PomodoroTasks;
 
 public class ConsoleUI {
 
@@ -10,7 +11,10 @@ public class ConsoleUI {
     Runnable onBreakTask;
     Runnable onWorkTask;
 
-    public ConsoleUI(ConsoleUtils utils, PomodoroFactory factory) {
+    public ConsoleUI(
+            ConsoleUtils utils,
+            PomodoroFactory factory,
+            PomodoroTasks tasks) {
         this.utils = utils;
 
         onBreakTask = () -> {
@@ -24,8 +28,14 @@ public class ConsoleUI {
         PomodoroTimer timer = factory.create(
                 requestWorkTime(),
                 requestBreakTime(),
-                onBreakTask,
-                onWorkTask
+                () -> {
+                    onBreakTask.run();
+                    tasks.runOnBreak().run();
+                },
+                () -> {
+                    onWorkTask.run();
+                    tasks.runOnWork().run();
+                }
         );
         timer.startAndSubscribe();
     }
