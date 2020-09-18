@@ -14,7 +14,7 @@ public class PomodoroTest {
 
     @Test
     public void checkInitialConditions() {
-        Assert.assertEquals(pomodoro.programmedDelay(), 60);
+        Assert.assertEquals(pomodoro.programmedDelayInMinutes(), 1);
         Assert.assertFalse(pomodoro.isRunning());
         Assert.assertFalse(pomodoro.hasFinished());
     }
