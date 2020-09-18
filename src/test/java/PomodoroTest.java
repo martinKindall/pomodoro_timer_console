@@ -36,10 +36,7 @@ public class PomodoroTest {
         TestObserver<Void> testObserver = TestObserver.create();
         observable.subscribe(testObserver);
 
-        testObserver.awaitDone(50, TimeUnit.SECONDS);
-        Assert.assertFalse(pomodoro.hasFinished());
-
-        testObserver.awaitDone(20, TimeUnit.SECONDS);
+        testObserver.awaitDone(65, TimeUnit.SECONDS);
         Assert.assertTrue(pomodoro.hasFinished());
     }
 
