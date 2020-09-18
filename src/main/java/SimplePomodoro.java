@@ -45,7 +45,7 @@ public class SimplePomodoro implements PomodoroTimer {
 
         ReplaySubject<Integer> newInterval = ReplaySubject.create();
 
-        Observable<Integer> finalObservable = newInterval.switchMap(currentPeriod ->
+        Observable<Integer> finalObservable = newInterval.flatMap(currentPeriod ->
                 Observable.just(0).delay(currentPeriod*60, TimeUnit.SECONDS)
                 .map(v -> {
                     if (isOnBreak) {
