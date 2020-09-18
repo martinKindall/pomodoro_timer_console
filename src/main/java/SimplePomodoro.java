@@ -1,23 +1,36 @@
 public class SimplePomodoro implements PomodoroTimer {
 
-    private int delay;
+    private int delayInMinutes;
+    private boolean isRunning;
+    private long startTime;
 
-    public SimplePomodoro(int delay) {
-        this.delay = delay;
+    public SimplePomodoro(int delayInMinutes) {
+        this.delayInMinutes = delayInMinutes;
+        isRunning = false;
+        startTime = 0;
     }
 
     @Override
     public int programmedDelayInMinutes() {
-        return delay;
+        return delayInMinutes;
     }
 
     @Override
     public boolean isRunning() {
-        return false;
+        return isRunning;
     }
 
     @Override
     public boolean hasFinished() {
-        return false;
+        if (!isRunning) return false;
+
+        long currentMillis = System.currentTimeMillis();
+        return (currentMillis - startTime)/1000 > (delayInMinutes*60);
+    }
+
+    @Override
+    public void start() {
+        isRunning = true;
+        startTime = System.currentTimeMillis();
     }
 }
