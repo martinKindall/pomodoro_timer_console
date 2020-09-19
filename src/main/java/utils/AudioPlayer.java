@@ -1,6 +1,8 @@
 package utils;
 
-import java.io.IOException;
+import java.io.*;
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 
 public class AudioPlayer implements PomodoroTasks {
 
@@ -17,13 +19,13 @@ public class AudioPlayer implements PomodoroTasks {
         ProcessBuilder processBuilder = new ProcessBuilder(
                 "python",
                 playerPath + "\\" + playerFile,
-                wavFile);
+                playerPath + "\\" + wavFile);
         processBuilder.redirectErrorStream(true);
 
         try {
             Process process = processBuilder.start();
-            System.out.println(process.getInputStream().toString());
             process.waitFor();
+            handleInputStreamAndPrint(process.getInputStream());
         } catch (IOException | InterruptedException e) {
             e.printStackTrace();
         }
@@ -37,5 +39,17 @@ public class AudioPlayer implements PomodoroTasks {
     @Override
     public Runnable runOnWork() {
         return () -> AudioPlayer.this.executeCommand(workWav);
+    }
+
+    private void handleInputStreamAndPrint(InputStream stream) throws IOException {
+        StringBuilder textBuilder = new StringBuilder();
+        try (Reader reader = new BufferedReader(new InputStreamReader
+                (stream, Charset.forName(StandardCharsets.UTF_8.name())))) {
+            int c = 0;
+            while ((c = reader.read()) != -1) {
+                textBuilder.append((char) c);
+            }
+        }
+        System.out.println(textBuilder);
     }
 }
