@@ -1,8 +1,8 @@
 import com.almasb.fxgl.app.GameSettings;
 
 import com.almasb.fxgl.app.GameApplication;
-import static com.almasb.fxgl.dsl.FXGLForKtKt.getAssetLoader;
-import static com.almasb.fxgl.dsl.FXGLForKtKt.getAudioPlayer;
+
+import static com.almasb.fxgl.dsl.FXGL.*;
 
 public class View extends GameApplication {
 
@@ -12,10 +12,21 @@ public class View extends GameApplication {
 
     @Override
     protected void initSettings(GameSettings gameSettings) {
+        gameSettings.setWidth(480);
+        gameSettings.setHeight(480);
+        gameSettings.setTitle("Lumbar Pomodoro");
+        gameSettings.setVersion("1.0");
+        gameSettings.setGameMenuEnabled(false);
+        gameSettings.setMainMenuEnabled(false);
+        gameSettings.setDeveloperMenuEnabled(false);
     }
 
     @Override
     protected void initGame() {
+        getGameScene().clearUINodes();
+        getGameScene().clearGameViews();
+        getGameScene().clearCSS();
+        getGameScene().clearEffect();
         new MainComponent().init(new SoundPlayer(getAssetLoader(), getAudioPlayer()));
     }
 }

@@ -15,7 +15,7 @@ public class SoundPlayer implements PomodoroTasks {
         this.player = player;
 
         breakSound = loader.loadSound("break.wav");
-        workSound = loader.loadSound("work.flac");
+        workSound = loader.loadSound("work.wav");
     }
 
     @Override
