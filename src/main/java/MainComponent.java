@@ -1,29 +1,23 @@
 import logic.PomodoroFactory;
 import ui.ConsoleUI;
 import ui.NotificationTasks;
+import utils.AudioPlayer;
 import utils.ConsoleUtils;
 import utils.PomodoroTasks;
 
 public class MainComponent {
 
     public static void main(String[] args) {
-        new MainComponent().init(new PomodoroTasks() {
-            @Override
-            public Runnable runOnBreak() {
-                return () -> System.out.println("");
-            }
+        String audioPlayerPath = args[0];
 
-            @Override
-            public Runnable runOnWork() {
-                return () -> System.out.println("");
-            }
-        });
+        new MainComponent().init(audioPlayerPath);
     }
 
-    public void init(PomodoroTasks tasks) {
+    public void init(String audioPlayerPath) {
         PomodoroFactory factory = new PomodoroFactory();
         ConsoleUtils utils = new ConsoleUtils();
         PomodoroTasks notificationTask = new NotificationTasks();
+        PomodoroTasks audioPlayerTask = new AudioPlayer(audioPlayerPath);
 
         ConsoleUI ui = new ConsoleUI(
                 utils,
@@ -32,7 +26,7 @@ public class MainComponent {
                     @Override
                     public Runnable runOnBreak() {
                         return () -> {
-                            tasks.runOnBreak().run();
+                            audioPlayerTask.runOnBreak().run();
                             notificationTask.runOnBreak().run();
                         };
                     }
@@ -40,7 +34,7 @@ public class MainComponent {
                     @Override
                     public Runnable runOnWork() {
                         return () -> {
-                            tasks.runOnWork().run();
+                            audioPlayerTask.runOnWork().run();
                             notificationTask.runOnWork().run();
                         };
                     }
