@@ -39,7 +39,7 @@ public class AudioPlayer implements PomodoroTasks {
     @Override
     public Runnable runOnWork() {
 //        return () -> AudioPlayer.this.executeCommand(workWav);
-        return () -> System.out.println("Work started.");
+        return () -> System.out.print("");
     }
 
     private void handleInputStreamAndPrint(InputStream stream) throws IOException {
