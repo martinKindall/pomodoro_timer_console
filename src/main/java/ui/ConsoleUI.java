@@ -18,11 +18,11 @@ public class ConsoleUI {
         this.utils = utils;
 
         onBreakTask = () -> {
-            utils.print("Empezó el break");
+            utils.print("Time to take a break :)");
         };
 
         onWorkTask = () -> {
-          utils.print("Empezó el trabajo");
+          utils.print("Work started!");
         };
 
         PomodoroTimer timer = factory.create(
@@ -37,6 +37,7 @@ public class ConsoleUI {
                     tasks.runOnWork().run();
                 }
         );
+        System.out.println("Work started!");
         timer.startAndSubscribe();
     }
 
