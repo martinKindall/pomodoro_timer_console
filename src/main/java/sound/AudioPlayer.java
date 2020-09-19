@@ -1,4 +1,6 @@
-package utils;
+package sound;
+
+import utils.PomodoroTasks;
 
 import java.io.*;
 import java.nio.charset.Charset;

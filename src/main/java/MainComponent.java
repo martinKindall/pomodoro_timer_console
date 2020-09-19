@@ -1,7 +1,7 @@
 import logic.PomodoroFactory;
 import ui.ConsoleUI;
 import ui.NotificationTasks;
-import utils.AudioPlayer;
+import sound.AudioPlayer;
 import utils.ConsoleUtils;
 import utils.PomodoroTasks;
 
